@@ -1,0 +1,204 @@
+@CHARSET "UTF-8";
+
+/* bootstrap */
+@media ( min-width :768px) {
+	.navbar-fixed-bottom .navbar-collapse, .navbar-fixed-top .navbar-collapse,
+		.navbar-static-top .navbar-collapse {
+		padding-right: 0;
+		padding-left: 0
+	}
+}
+
+.navbar-fixed-bottom .navbar-collapse, .navbar-fixed-top .navbar-collapse
+	{
+	max-height: 340px
+}
+
+@media ( max-device-width :480px) and (orientation:landscape) {
+	.navbar-fixed-bottom .navbar-collapse, .navbar-fixed-top .navbar-collapse
+		{
+		max-height: 200px
+	}
+}
+
+.navbar-fixed-bottom, .navbar-fixed-top {
+	position: fixed;
+	right: 0;
+	left: 0;
+	z-index: 1030
+}
+
+.btn-group-vertical>.btn-group:after, .btn-group-vertical>.btn-group:before,
+	.btn-toolbar:after, .btn-toolbar:before, .clearfix:after, .clearfix:before,
+	.container-fluid:after, .container-fluid:before, .container:after,
+	.container:before, .dl-horizontal dd:after, .dl-horizontal dd:before,
+	.form-horizontal .form-group:after, .form-horizontal .form-group:before,
+	.modal-footer:after, .modal-footer:before, .nav:after, .nav:before,
+	.navbar-collapse:after, .navbar-collapse:before, .navbar-header:after,
+	.navbar-header:before, .navbar:after, .navbar:before, .pager:after,
+	.pager:before, .panel-body:after, .panel-body:before, .row:after, .row:before
+	{
+	display: table;
+	content: " "
+}
+
+@media ( min-width :768px) {
+	.navbar-header {
+		float: left
+	}
+}
+
+.container-fluid>.navbar-collapse, .container-fluid>.navbar-header,
+	.container>.navbar-collapse, .container>.navbar-header {
+	margin-right: -15px;
+	margin-left: -15px
+}
+
+.btn-group-vertical>.btn-group:after, .btn-toolbar:after, .clearfix:after,
+	.container-fluid:after, .container:after, .dl-horizontal dd:after,
+	.form-horizontal .form-group:after, .modal-footer:after, .nav:after,
+	.navbar-collapse:after, .navbar-header:after, .navbar:after, .pager:after,
+	.panel-body:after, .row:after {
+	clear: both
+}
+
+/* 상단 배경색 설정 */
+.navbar-inverse {
+	background-color: #FFFFFF;
+	border-color: #FFFFFF;
+}
+
+/* 상단 사이트명 색상 설정 */
+.navbar-inverse .navbar-brand {
+	color: #9D9D9D;
+}
+
+/* 상단 사이트명 크기 설정 */
+.navbar-brand {
+	height: 80px;
+	font-size: 23px;
+}
+
+#center {
+	height: auto;
+}
+
+#footer {
+	height: auto;
+	padding-top: 50px;
+}
+
+.navbar-form {
+	margin-top: 22px;
+}
+
+.navbar-brand {
+	padding: 30px 15px;
+}
+
+div .wrap {
+	padding-top: 0px;
+}
+
+/* 상단 카테고리 글씨색 변경*/
+.navbar-inverse .navbar-nav>li>a {
+	color: #101010;
+	font-size: 30px;
+	font-weight: bold;
+	padding-top: 30px;
+	padding-bottom: 15px;
+	padding-left: 100px;
+}
+
+/* 메인 이미지 */
+.main_img {
+	align: center;
+	margin: 30px;
+}
+
+div .wrap {
+	padding-top: 100px;
+}
+
+th {
+	background: black;
+	color: white;
+	font: italic;
+	/* font-family: "맑은고딕"; */
+	font-size: x-large;
+}
+
+.table {
+	width: 70%;
+	margin: auto;
+}
+
+td {
+	text-align: left;
+	font: italic;
+	/* font-family: "맑은고딕"; */
+	font-size: large;
+}
+
+.form-control {
+	width: 70%;
+	margin: auto;
+}
+
+.button {
+	background-color: #4E4E4E;
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	margin: 4px 2px;
+	cursor: pointer;
+}
+/*테이블디자인*/
+.type10 {
+	border-collapse: collapse;
+	text-align: left;
+	line-height: 1.5;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	margin: 20px 10px;
+}
+
+.type10 thead th {
+	width: 150px;
+	padding: 10px;
+	font-weight: bold;
+	vertical-align: top;
+	color: #fff;
+	background: #000000;
+	margin: 20px 10px;
+}
+
+.type10 td {
+	width: 350px;
+	padding: 10px;
+	vertical-align: top;
+}
+
+.btn-group-xs>.btn, .btn-xs {
+	padding: 1px 7px;
+	font-size: 20px;
+	line-height: 1.5;
+	border-radius: 8px;
+	color: #000;
+	background-color: #ffffff;
+	border-color: #2e6da4;
+}
+
+.btn-group-xs>.btn, .btn-xs2 {
+	padding: 1px 7px;
+	font-size: 20px;
+	line-height: 1.5;
+	border-radius: 8px;
+	color: #ffffff;
+	background-color: #000;
+	border-color: #2e6da4;
+}
