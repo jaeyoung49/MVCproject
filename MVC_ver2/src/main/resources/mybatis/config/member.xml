@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Sql Mapper -->
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="member">
+
+ 	<!-- resultMap 설정 -->
+ 	<!-- articleCategoryVO -->
+ 	<resultMap type="articleCategoryVO" id="articleCategoryRM">
+ 		<result column="art_cat_no" property="articleCategoryNo"/>
+ 		<result column="art_cat_name" property="articleCategoryName"/>
+ 	</resultMap>
+ 	
+ 	<!-- articleVO -->
+ 	<resultMap type="articleVO" id="articleRM">
+ 		<result column="art_no" property="articleNo"/>
+ 		<result column="id" property="memberVO.id"/>
+ 		<result column="art_cat_no" property="articleCategoryVO.articleCategoryNo"/>
+ 		<result column="art_title" property="articleTitle"/>
+ 		<result column="art_content" property="articleContent"/>
+ 		<result column="art_date" property="articleDate"/>
+ 		<result column="art_hit" property="articleHit"/>
+ 		<result column="resp_group" property="responseGroup"/>
+ 		<result column="resp_order" property="responseOrder"/>
+ 		<result column="resp_step" property="responseStep"/>
+ 	</resultMap>
+ 	
+ 	<!-- cosmeticCategoryVO -->
+ 	<resultMap type="cosmeticCategoryVO" id="cosmeticCategoryRM">
+ 		<result column="cos_cat_no" property="cosmeticCategoryNo"/>
+ 		<result column="cos_cat_name" property="cosmeticCategoryName"/>
+ 	</resultMap>
+ 	
+ 	<!-- epilogueVO -->
+ 	<resultMap type="epilogueVO" id="epilogueRM">
+ 		<result column="art_no" property="articleVO.articleNo"/>
+ 		<result column="cos_cat_no" property="cosmeticCategoryVO.cosmeticCategoryNo"/>
+ 		<result column="image_path" property="imagePath"/>
+ 		<result column="file_name" property="fileName"/>
+ 		<result column="file_ext" property="fileExt"/>
+ 		<result column="id" property="articleVO.memberVO.id"/>
+ 		<result column="art_cat_no" property="articleVO.articleCategoryVO.articleCategoryNo"/>
+ 		<result column="art_title" property="articleVO.articleTitle"/>
+ 		<result column="art_content" property="articleVO.articleContent"/>
+ 		<result column="art_date" property="articleVO.articleDate"/>
+ 		<result column="art_hit" property="articleVO.articleHit"/>
+ 		<result column="resp_group" property="articleVO.responseGroup"/>
+ 		<result column="resp_order" property="articleVO.responseOrder"/>
+ 		<result column="resp_step" property="articleVO.responseStep"/>
+ 	</resultMap>
+ 	
+ 	<!-- gradeVO -->
+ 	<resultMap type="gradeVO" id="gradeRM">
+ 		<result column="gr_no" property="gradeNo"/>
+ 		<result column="gr_name" property="gradeName"/>
+ 		<result column="art_count_low" property="articleCountLow"/>
+ 		<result column="re_count_low" property="replyCountLow"/>
+ 	</resultMap>
+ 	
+ 	<!-- memberVO -->
+ 	<resultMap type="memberVO" id="memberRM">
+ 		<result column="art_count" property="articleCount"/>
+ 		<result column="re_count" property="replyCount"/>
+ 		<result column="gr_no" property="gradeVO.gradeNo"/>
+ 		<result column="gr_name" property="gradeVO.gradeName"/>
+ 	</resultMap>
+ 	
+ 	<!-- noticeVO -->
+ 	<resultMap type="noticeVO" id="noticeRM">
+ 		<result column="art_no" property="articleVO.articleNo"/>
+ 		<result column="id" property="articleVO.memberVO.id"/>
+ 		<result column="art_cat_no" property="articleVO.articleCategoryVO.articleCategoryNo"/>
+ 		<result column="art_title" property="articleVO.articleTitle"/>
+ 		<result column="art_content" property="articleVO.articleContent"/>
+ 		<result column="art_date" property="articleVO.articleDate"/>
+ 		<result column="art_hit" property="articleVO.articleHit"/>
+ 		<result column="resp_group" property="articleVO.responseGroup"/>
+ 		<result column="resp_order" property="articleVO.responseOrder"/>
+ 		<result column="resp_step" property="articleVO.responseStep"/>
+ 	</resultMap>
+ 	
+ 	<!-- replyVO -->
+ 	<resultMap type="replyVO" id="replyRM">
+ 		<result column="re_no" property="replyNo"/>
+ 		<result column="id" property="memberVO.id"/>
+ 		<result column="art_no" property="articleVO.articleNo"/>
+ 		<result column="re_content" property="replyContent"/>
+ 		<result column="re_date" property="replyDate"/>
+ 		<result column="re_resp_group" property="replyResponseGroup"/>
+ 		<result column="re_resp_order" property="replyResponseOrder"/>
+ 		<result column="re_resp_step" property="replyResponseStep"/>
+ 	</resultMap>
+ 	
+ 	<!-- DAO연동 -->
+ 	<!-- 회원가입 -->
+ 	<insert id="join">
+ 		insert into member(id, password, name, sex, email, nick, birthday, regdate)
+ 		values(#{id}, #{password}, #{name}, #{sex}, #{email}, #{nick}, #{birthday}, sysdate)
+ 	</insert>
+ 	
+ 	<!-- 로그인 -->
+ 	<select id="login" resultMap="memberRM">
+ 		select m.id, m.name, m.nick, g.gr_name, g.gr_no
+		from grade g,member m 
+		where id=#{id} and password=#{password} and g.gr_no=m.gr_no
+ 	</select>
+ 	
+ 	<!-- 아이디로 회원 검색 -->
+ 	<select id="findMemberById" resultMap="memberRM">
+ 		select id, password, nick, email, birthday
+ 		from member 
+ 		where id=#{id}
+ 	</select>
+ 	
+ 	<!-- 회원정보변경 -->
+ 	<update id="changeMyInfo" parameterType="memberVO">
+ 		update member 
+ 		set nick=#{nick}, email=#{email}, birthday=#{birthday}
+ 		where id=#{id}
+ 	</update>
+ 	
+ 	<!-- 회원 게시글 등록수 증가 -->
+ 	<update id="updateMemberArticleCount" parameterType="memberVO">
+ 		update member 
+ 		set art_count=art_count+1
+ 		where id=#{id}
+ 	</update>
+ 	
+</mapper>

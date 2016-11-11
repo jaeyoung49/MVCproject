@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Sql Mapper -->
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="board">
+ 	
+ 	<!-- resultMap 설정 -->
+ 	<!-- articleCategoryVO -->
+ 	<resultMap type="articleCategoryVO" id="articleCategoryRM">
+ 		<result column="art_cat_no" property="articleCategoryNo"/>
+ 		<result column="art_cat_name" property="articleCategoryName"/>
+ 	</resultMap>
+ 	
+ 	<!-- articleVO -->
+ 	<resultMap type="articleVO" id="articleRM">
+ 		<result column="art_no" property="articleNo"/>
+ 		<result column="id" property="memberVO.id"/>
+ 		<result column="art_cat_no" property="articleCategoryVO.articleCategoryNo"/>
+ 		<result column="art_title" property="articleTitle"/>
+ 		<result column="art_content" property="articleContent"/>
+ 		<result column="art_date" property="articleDate"/>
+ 		<result column="art_hit" property="articleHit"/>
+ 		<result column="resp_group" property="responseGroup"/>
+ 		<result column="resp_order" property="responseOrder"/>
+ 		<result column="resp_step" property="responseStep"/>
+ 	</resultMap>
+ 	
+ 	<!-- cosmeticCategoryVO -->
+ 	<resultMap type="cosmeticCategoryVO" id="cosmeticCategoryRM">
+ 		<result column="cos_cat_no" property="cosmeticCategoryNo"/>
+ 		<result column="cos_cat_name" property="cosmeticCategoryName"/>
+ 	</resultMap>
+ 	
+ 	<!-- epilogueVO -->
+ 	<resultMap type="epilogueVO" id="epilogueRM">
+ 		<result column="art_no" property="articleVO.articleNo"/>
+ 		<result column="cos_cat_no" property="cosmeticCategoryVO.cosmeticCategoryNo"/>
+ 		<result column="image_path" property="imagePath"/>
+ 		<result column="file_name" property="fileName"/>
+ 		<result column="file_ext" property="fileExt"/>
+ 		<result column="id" property="articleVO.memberVO.id"/>
+ 		<result column="art_cat_no" property="articleVO.articleCategoryVO.articleCategoryNo"/>
+ 		<result column="art_title" property="articleVO.articleTitle"/>
+ 		<result column="art_content" property="articleVO.articleContent"/>
+ 		<result column="art_date" property="articleVO.articleDate"/>
+ 		<result column="art_hit" property="articleVO.articleHit"/>
+ 		<result column="resp_group" property="articleVO.responseGroup"/>
+ 		<result column="resp_order" property="articleVO.responseOrder"/>
+ 		<result column="resp_step" property="articleVO.responseStep"/>
+ 	</resultMap>
+ 	
+ 	<!-- gradeVO -->
+ 	<resultMap type="gradeVO" id="gradeRM">
+ 		<result column="gr_no" property="gradeNo"/>
+ 		<result column="gr_name" property="gradeName"/>
+ 		<result column="art_count_low" property="articleCountLow"/>
+ 		<result column="re_count_low" property="replyCountLow"/>
+ 	</resultMap>
+ 	
+ 	<!-- memberVO -->
+ 	<resultMap type="memberVO" id="memberRM">
+ 		<result column="art_count" property="articleCount"/>
+ 		<result column="re_count" property="replyCount"/>
+ 		<result column="gr_no" property="gradeVO.gradeNo"/>
+ 	</resultMap>
+ 	
+ 	<!-- noticeVO -->
+ 	<resultMap type="noticeVO" id="noticeRM">
+ 		<result column="art_no" property="articleVO.articleNo"/>
+ 		<result column="id" property="articleVO.memberVO.id"/>
+ 		<result column="art_cat_no" property="articleVO.articleCategoryVO.articleCategoryNo"/>
+ 		<result column="art_title" property="articleVO.articleTitle"/>
+ 		<result column="art_content" property="articleVO.articleContent"/>
+ 		<result column="art_date" property="articleVO.articleDate"/>
+ 		<result column="art_hit" property="articleVO.articleHit"/>
+ 		<result column="resp_group" property="articleVO.responseGroup"/>
+ 		<result column="resp_order" property="articleVO.responseOrder"/>
+ 		<result column="resp_step" property="articleVO.responseStep"/>
+ 	</resultMap>
+ 	
+ 	<!-- replyVO -->
+ 	<resultMap type="replyVO" id="replyRM">
+ 		<result column="re_no" property="replyNo"/>
+ 		<result column="id" property="memberVO.id"/>
+ 		<result column="art_no" property="articleVO.articleNo"/>
+ 		<result column="re_content" property="replyContent"/>
+ 		<result column="re_date" property="replyDate"/>
+ 		<result column="re_resp_group" property="replyResponseGroup"/>
+ 		<result column="re_resp_order" property="replyResponseOrder"/>
+ 		<result column="re_resp_step" property="replyResponseStep"/>
+ 	</resultMap>
+ 	
+ 	
+ 	
+ 	<!-- Sql 설정 -->
+ 	<!-- totalContents -->
+ 	<sql id="totalContents">
+ 		select count(*) as totalContents from article
+ 	</sql>
+ 	
+ 	
+ 	
+ 	<!-- DAO -->
+ 	<!-- 공지 전체 글 갯수 -->
+ 	<select id="getNoticeTotalContents" resultType="PagingBean">
+ 		<include refid="totalContents" />
+ 		where art_cat_no = 2
+ 	</select>
+ 	
+ 	<!-- 조회수 증가 -->
+ 	<update id="updateHit" parameterType="articleVO">
+ 		update article set art_hit=art_hit+1 where art_no=#{articleNo}
+ 	</update>
+ 	
+ 	<!-- 상위표시 공지 리스트 -->
+ 	<select id="getPriorityNoticeList" resultMap="noticeRM">
+ 		select rnum, art_no, art_title, id, art_date, art_hit, priority
+	 	from(
+	 		select row_number() over(order by a.art_no desc) as rnum, a.art_no, a.art_title, id,
+	 		to_char(a.art_date,'yyyy-mm-dd') as art_date, a.art_hit, n.priority
+	 		from article a, notice n
+	 		where a.art_no=n.art_no and art_cat_no=2
+	 	)
+		where priority=1
+ 	</select>
+ 	
+ 	<!-- 일반 공지 리스트 -->
+ 	<select id="getNoticeList" resultMap="noticeRM">
+ 		select rnum, art_no, art_title, id, art_date, art_hit, priority, resp_step
+		from(
+			select row_number() over(order by a.resp_group desc, a.resp_order asc) as rnum, a.art_no, a.art_title, id,
+			to_char(a.art_date,'yyyy-mm-dd') as art_date, a.art_hit, a.resp_step, n.priority
+			from article a, notice n
+			where a.art_no=n.art_no and art_cat_no=2
+		)
+		where rnum between #{startRowNumber} and #{endRowNumber}
+ 	</select>
+ 	
+ 	<!-- 공통부분 글 등록 -->
+ 	<insert id="articleRegister" parameterType="articleVO">
+ 		<selectKey keyProperty="articleNo" order="BEFORE" resultType="int">
+ 			select seq_article.nextval from dual
+ 		</selectKey>
+ 		insert into article(art_no, id, art_cat_no, art_title, art_content, art_date, resp_group) 
+ 		values(#{articleNo}, #{memberVO.id}, #{articleCategoryVO.articleCategoryNo}, 
+ 			#{articleTitle}, #{articleContent}, sysdate, seq_resp_group1.nextval) 
+ 	</insert>
+ 	
+ 	<!-- 공지 글 등록 -->
+ 	<insert id="noticeRegister" parameterType="noticeVO">
+ 		insert into Notice(art_no, priority) values(#{articleVO.articleNo}, #{priority})
+ 	</insert>
+ 	
+ 	<!-- 공지 글 조회 -->
+ 	<select id="noticeDetail" parameterType="noticeVO" resultMap="noticeRM">
+ 		select a.art_no, a.id, a.art_title, a.art_content, a.resp_group, a.resp_order, resp_step, 
+			to_char(a.art_date, 'yyyy.mm.dd hh24:mi:ss') as art_date, a.art_hit, n.priority
+		from article a, notice n 
+		where a.art_no=n.art_no and a.art_no=#{articleVO.articleNo}
+ 	</select>
+ 	
+ 	<!-- 공통부분 글 수정 -->
+ 	<update id="articleUpdate" parameterType="articleVO">
+ 		update article set art_title=#{articleTitle}, id=#{memberVO.id}, 
+ 			art_content=#{articleContent}, art_date=sysdate 
+ 		where art_no=#{articleNo}
+ 	</update>
+ 	
+ 	<!-- 공지 글 수정 -->
+ 	<update id="noticeUpdate" parameterType="noticeVO">
+ 		update notice set priority=#{priority} where art_no=#{articleVO.articleNo}
+ 	</update>
+ 	
+ 	<!-- 공통부분 글 삭제 -->
+ 	<delete id="articleDelete" parameterType="articleVO">
+ 		delete article where art_no=#{articleNo}
+ 	</delete>
+ 	
+ 	<!-- 공통 글 삭제시 관련 댓글 삭제 -->
+ 	<delete id="relatedReplyDelete" parameterType="articleVO">
+ 		delete reply where art_no=#{articleNo}
+ 	</delete>
+ 	
+ 	<!-- 공지 글 삭제 -->
+ 	<delete id="noticeDelete" parameterType="noticeVO">
+ 		delete notice where art_no=#{articleVO.articleNo}
+ 	</delete>
+ 	
+ 	<!-- 답글 작성시 게시판 정렬 -->
+ 	<update id="lineUpBoard" parameterType="articleVO">
+ 		update article set resp_order=resp_order+1
+ 		where resp_group=#{responseGroup} and resp_order>=#{responseOrder}
+ 	</update>
+ 	
+ 	<!-- 공통부분 답글 등록 -->
+ 	<insert id="articleResponse" parameterType="articleVO">
+ 		<selectKey keyProperty="articleNo" order="BEFORE" resultType="int">
+ 			select seq_article.nextval from dual
+ 		</selectKey>
+ 		insert into article(art_no, id, art_cat_no, art_title, art_content, art_date, resp_group, resp_order, resp_step) 
+ 		values(#{articleNo}, #{memberVO.id}, #{articleCategoryVO.articleCategoryNo}, 
+ 			#{articleTitle}, #{articleContent}, sysdate, #{responseGroup}, #{responseOrder}, #{responseStep}) 
+ 	</insert>
+ 	
+ 	
+ 	<!-- QnA 전체 글 갯수 -->
+ 	<select id="qnaTotalContents" resultType="PagingBean">
+ 		<include refid="totalContents" />
+ 		where art_cat_no = 3
+ 	</select>
+ 	
+ 	<!-- QnA 공지 리스트 -->
+ 	<select id="getQnaList" resultMap="articleRM">
+ 		select rnum, art_no, art_title, id, art_date, art_hit, resp_step
+		from(
+			select row_number() over(order by resp_group desc, resp_order asc) as rnum, art_no, art_title, id,
+			to_char(art_date,'yyyy-mm-dd') as art_date, art_hit, resp_step
+			from article
+			where art_cat_no=3
+		)
+		where rnum between #{startRowNumber} and #{endRowNumber}
+ 	</select>
+ 	
+ 	<!-- QnA 글 조회 -->
+ 	<select id="qnaDetail" parameterType="articleVO" resultMap="articleRM">
+ 		select art_no, id, art_title, art_content, resp_group, resp_order, resp_step, 
+			to_char(art_date, 'yyyy.mm.dd hh24:mi:ss') as art_date, art_hit
+		from article
+		where art_no=#{articleNo}
+ 	</select>
+ 	
+ 	
+ 	
+ 	<!-- replyTotalContents -->
+ 	<select id="replyTotalContents" resultType="PagingBean">
+		select count(*) as totalContents from reply
+ 		where art_no = #{value}
+ 	</select>
+ 	
+ 	<!-- reply 리스트 -->
+ 	<select id="getReplyList" resultMap="replyRM">
+ 		select rnum, re_no, id, art_no, re_date, re_content, re_resp_group, re_resp_order, re_resp_step
+		from(
+			select row_number() over(order by re_resp_group desc, re_resp_order asc) as rnum, re_no, id, art_no,
+			to_char(re_date,'yyyy-mm-dd') as re_date, re_content, re_resp_group, re_resp_order, re_resp_step
+			from reply
+			where art_no=#{articleNo}
+		)
+		where rnum between #{startRowNumber} and #{endRowNumber}
+ 	</select>
+ 	
+ 	<!-- reply 등록 -->
+ 	<insert id="replyRegister">
+ 		insert into reply(re_no, id, art_no, re_content, re_date, re_resp_group, re_resp_order, re_resp_step) 
+ 		values(seq_reply.nextval, #{memberVO.id}, #{articleVO.articleNo}, #{replyContent}, sysdate, 
+			<choose>
+				<when test="replyResponseGroup == 0">
+					seq_re_resp_group.nextval
+				</when>
+				<otherwise>
+					#{replyResponseGroup}
+		 		</otherwise>
+		 	</choose> 				
+ 			, #{replyResponseOrder}, #{replyResponseStep} ) 
+ 	</insert>
+ 	
+ 	<!-- reply 답글 작성시 정렬 -->
+ 	<update id="lineUpReply" parameterType="replyVO">
+ 		update reply set re_resp_order=re_resp_order+1
+ 		where re_resp_group=#{replyResponseGroup} and re_resp_order>=#{replyResponseOrder}
+ 	</update>
+</mapper>
